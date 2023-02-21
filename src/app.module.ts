@@ -7,16 +7,42 @@ import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    UserModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
-      definitions: {
-        path: join(process.cwd(), 'src/graphql.ts'),
-        outputAs: 'class',
+      directiveResolvers:{
+        isAuthenticated: (next, source, args, ctx) => {
+          // if (role === user.role) return next();
+          // throw new Error(`Must have role: ${role}, you have role: ${user.role}`);
+          console.log({args});
+          return next();
+        },
+        hasRole: (next, source, { role }, ctx) => {
+          // console.log(role);
+          // if (role === user.role) return next();
+          // throw new Error(`Must have role: ${role}, you have role: ${user.role}`);
+          console.log('hasRole');
+          return next();
+        },
+      },
+      context: async ({ req, res }) => {
+        let currentUser;
+
+        const { token } = req.headers;
+        console.log('TCL: token', token);
+
+        // add the user to the context
+        return {
+          req,
+          res,
+          // pubsub,
+          currentUser,
+        };
       },
       debug: false,
       subscriptions: {
@@ -52,9 +78,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
       useNewUrlParser: true,
       logging: true,
-    })
+    }),
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}

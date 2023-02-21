@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserInput } from './user.entity';
-import { Repository, MongoRepository } from 'typeorm';
+import { LoginResponse, LoginUserInput, User, UserInput } from './user.entity';
+import { MongoRepository } from 'typeorm';
+import { AuthenticationError } from 'apollo-server-express';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
@@ -41,5 +43,30 @@ export class UserService {
 
   async deleteAll(): Promise<boolean> {
     return (await this.userRepository.deleteMany({})) ? true : false;
+  }
+
+  async login(input: LoginUserInput): Promise<LoginResponse> {
+    const { username, password } = input;
+    const message = 'Incorrect email or password. Please try again.';
+
+    const user = await this.userRepository.findOne({ username });
+
+    if (!user || !(await user.matchesPassword(password))) {
+      throw new AuthenticationError(message);
+    }
+
+    const token = await jwt.sign(
+      {
+        issuer: 'bode',
+        subject: user._id,
+        audience: user.username,
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: '1d',
+      },
+    );
+
+    return { token };
   }
 }

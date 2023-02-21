@@ -134,3 +134,31 @@ NestJS provides a built-in GraphQL Playground that you can use to explore and te
 
 In addition to the built-in features, the Playground can also be customized using configuration options. For example, you can customize the colors, fonts, and logos of the Playground to match your branding. You can also disable certain features, like the ability to save queries, or enable other features, like the ability to download the schema as a JSON file. The customization options are available through the configuration options passed to the `GraphQLModule.forRoot` method.
 
+### `graphql-voyager`
+GraphQL Voyager is a tool for visualizing and exploring GraphQL APIs. It provides a visual representation of the entire schema and allows users to explore the types, fields, and relationships between them. With Voyager, you can easily navigate through the schema, see the types, query fields, and relationships in a graphical format, and get more context about your GraphQL API. It's useful for developers who want to learn more about an unfamiliar schema, troubleshoot issues with an existing schema, or just explore the structure of their GraphQL API. Voyager is built with React and supports a wide range of GraphQL implementations.
+
+`http://localhost:3000/voyager`
+
+
+### Custom directive in GraphQL
+```
+# user.graphql
+directive @isAuthenticated on FIELD | FIELD_DEFINITION
+directive @hasRole(role: String) on FIELD | FIELD_DEFINITION
+
+type Query {
+  users: [User!]! @isAuthenticated
+}
+```
+This is an example of a custom directive in GraphQL that can be used to check if a user is authenticated before accessing a specific field or field definition.
+
+The `@isAuthenticated` directive can be applied to a field or field definition in a GraphQL schema. When a client sends a query that includes this directive, the server can check whether the user is authenticated before allowing the query to be executed.
+
+In this example, the @isAuthenticated directive is applied to the `users` field in the Query type. When a client sends a query for the `users` field, the server can check whether the user is authenticated before allowing the query to be executed. If the user is not authenticated, the server can return an error instead of executing the query.
+
+### `dotnet`
+The `dotenv` library is used to load environment variables from a `.env` file into your Node.js application's process.env object. Environment variables are values that are set outside of your application code, typically in a shell environment, and are often used to store sensitive information like API keys, passwords, and database connection strings.
+
+When you use the `dotenv` library, it will automatically load the values from the `.env` file into the process.env object, making them available to your application code. Without using `dotenv`, you would need to set the environment variables manually or use a different method to load them into your application.
+
+One important note is that you should never commit your `.env` file to source control, as this could expose sensitive information to others. Instead, you should add it to your `.gitignore` file or another exclusion mechanism to ensure it is not included in your commits.

@@ -10,24 +10,47 @@ import {
 } from 'typeorm';
 import * as uuid from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { IsString, IsNotEmpty, Length, MinLength } from 'class-validator';
 
-export class UserInput {
+export class LoginUserInput {
+  @IsString()
+  @MinLength(4, {
+    message: 'Your username must be at least 4 characters',
+  })
+  @IsNotEmpty()
   username: string;
+
+  @Length(1, 8, {
+    message: 'Your password must be between 1 and 8 characters.',
+  })
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
-export abstract class IMutation {
-  abstract createUser(input: UserInput): User | Promise<User>;
+export class UserInput {
+  @IsString()
+  @MinLength(4, {
+    message: 'Your username must be at least 4 characters',
+  })
+  @IsNotEmpty()
+  username: string;
 
-  abstract updateUser(_id: string, input: UserInput): User | Promise<User>;
-
-  abstract deleteUser(_id: string): boolean | Promise<boolean>;
+  @Length(1, 8, {
+    message: 'Your password must be between 1 and 8 characters.',
+    context: {
+      errorCode: 1003,
+      developerNote: 'The validated string must contain 32 or more characters.',
+    },
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }
 
-export abstract class IQuery {
-  abstract users(): User[] | Promise<User[]>;
-
-  abstract user(): User | Promise<User>;
+export class LoginResponse {
+  @IsString()
+  token: string;
 }
 
 @Entity()
@@ -35,13 +58,24 @@ export class User {
   @ObjectIdColumn()
   _id: string;
 
-  @Column('varchar', { length: 255 })
+  @Column()
+  @IsString()
+  @IsNotEmpty()
   username: string;
   
-  @Column('varchar', { length: 255 })
+  @Column()
+  @IsString()
+  @IsNotEmpty()
   password: string;
 
-  @Column('bit')
+  @Column()
+  @IsString()
+  @IsNotEmpty()
+  role: string;
+
+  @Column()
+  @IsString()
+  @IsNotEmpty()
   status: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
@@ -53,6 +87,7 @@ export class User {
   @BeforeInsert()
   async b4register() {
     this._id = await uuid.v4();
+    this.role = await 'member';
     this.status = await true;
     this.password = await bcrypt.hash(this.password, 10);
   }
@@ -65,5 +100,9 @@ export class User {
   @BeforeRemove()
   async b4block() {
     this.status = false;
+  }
+
+  async matchesPassword(password) {
+    return await bcrypt.compare(password, this.password);
   }
 }

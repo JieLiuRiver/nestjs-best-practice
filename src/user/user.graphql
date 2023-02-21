@@ -1,10 +1,18 @@
+directive @isAuthenticated on FIELD | FIELD_DEFINITION
+directive @hasRole(role: String) on FIELD | FIELD_DEFINITION
+
 type User {
   _id: String!
   username: String!
   password: String!
+  role: String!
   status: Boolean!
   createdAt: String!
   updatedAt: String!
+}
+
+type LoginResponse {
+  token: String!
 }
 
 input UserInput {
@@ -12,15 +20,21 @@ input UserInput {
   password: String!
 }
 
+input LoginUserInput {
+  username: String!
+  password: String!
+}
+
 type Query {
-  hello: String!
-  users: [User!]!
+  hello: String! @isAuthenticated
+  users: [User!]! @isAuthenticated
   user(_id: String!): User!
 }
 
 type Mutation {
-  createUser(input: UserInput!): User!
+  register(input: UserInput!): User!
   updateUser(_id: String!, input: UserInput!): Boolean!
   deleteUser(_id: String!): Boolean!
   deleteAll: Boolean!
+  login(input: LoginUserInput!): LoginResponse!
 }
