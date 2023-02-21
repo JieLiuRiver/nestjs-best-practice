@@ -17,7 +17,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "webpack": "rm -rf dist && webpack --config webpack.config.js",
+    "start:webpack": "node dist/server"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.0",
@@ -25,6 +27,8 @@
     "@nestjs/core": "^6.0.0",
     "@nestjs/graphql": "^6.2.4",
     "@nestjs/platform-express": "^6.0.0",
+    "@nestjs/platform-socket.io": "^6.3.1",
+    "@nestjs/websockets": "^6.3.1",
     "@nestjs/typeorm": "^6.1.2",
     "apollo-server-express": "^2.6.3",
     "apollo-server-cache-memcached": "^0.5.0",
@@ -58,13 +62,17 @@
     "jest": "^23.6.0",
     "nodemon": "^1.18.9",
     "prettier": "^1.15.3",
+    "ts-loader": "^6.0.4",
     "supertest": "^3.4.1",
     "ts-jest": "24.0.2",
     "ts-node": "8.1.0",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
-    "typescript": "3.4.3",
-    "wait-on": "^3.2.0"
+    "typescript": "^3.5.2",
+    "wait-on": "^3.2.0",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-node-externals": "^1.7.2"
   },
   "jest": {
     "moduleFileExtensions": [
