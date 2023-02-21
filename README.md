@@ -121,3 +121,16 @@ mutation {
 }
 ```
 Just replace USER_ID_HERE, NEW_USERNAME_HERE, and NEW_PASSWORD_HERE with the appropriate values.
+
+
+### Cache GraphQL Query Result
+
+`apollo-server-cache-memcached`
+
+Using `apollo-server-cache-memcached` with Apollo Server allows for efficient caching of query results, reducing the number of requests sent to a data source and improving the overall performance of a GraphQL API. By caching query results in Memcached, subsequent requests for the same data can be served directly from the cache, avoiding the need to execute the query and retrieve data from the data source.
+
+### Customized Playground
+NestJS provides a built-in GraphQL Playground that you can use to explore and test your GraphQL API. The Playground has several built-in features like interactive documentation, schema exploration, query testing, and code generation.
+
+In addition to the built-in features, the Playground can also be customized using configuration options. For example, you can customize the colors, fonts, and logos of the Playground to match your branding. You can also disable certain features, like the ability to save queries, or enable other features, like the ability to download the schema as a JSON file. The customization options are available through the configuration options passed to the `GraphQLModule.forRoot` method.
+
