@@ -15,16 +15,29 @@ export class UserService {
   }
 
   async findById(_id: string): Promise<User> {
-    return await this.userRepository.findOne(_id);
+    return await this.userRepository.findOne({ _id: _id });
   }
 
   async create(input: UserInput): Promise<User> {
-    return await this.userRepository.save({ ...input });
+    const user = new User();
+    user.username = input.username;
+    user.password = input.password;
+    return await this.userRepository.save(user);
   }
 
-  // async update(_id: string, input: UserInput): Promise<User> {
-  //   return await this.userRepository.update({ _id });
-  // }
+  async update(_id: string, input: UserInput): Promise<boolean> {
+    const user = new User();
+    user._id = _id;
+    user.username = input.username;
+    user.password = input.password;
+    return (await this.userRepository.save(user)) ? true : false;
+  }
+
+  async delete(_id: string): Promise<boolean> {
+    const user = new User();
+    user._id = _id;
+    return (await this.userRepository.remove(user)) ? true : false;
+  }
 
   async deleteAll(): Promise<boolean> {
     return (await this.userRepository.deleteMany({})) ? true : false;

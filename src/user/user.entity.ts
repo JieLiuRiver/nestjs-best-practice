@@ -1,4 +1,15 @@
-import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
+import { 
+  Entity, 
+  Column, 
+  ObjectIdColumn, 
+  CreateDateColumn, 
+  UpdateDateColumn,  
+  BeforeInsert,
+  BeforeUpdate,
+  BeforeRemove
+} from 'typeorm';
+import * as uuid from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 export class UserInput {
   username: string;
@@ -22,9 +33,37 @@ export abstract class IQuery {
 @Entity()
 export class User {
   @ObjectIdColumn()
-  _id: ObjectID;
-  @Column()
+  _id: string;
+
+  @Column('varchar', { length: 255 })
   username: string;
-  @Column()
+  
+  @Column('varchar', { length: 255 })
   password: string;
+
+  @Column('bit')
+  status: boolean;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: string;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: string;
+
+  @BeforeInsert()
+  async b4register() {
+    this._id = await uuid.v4();
+    this.status = await true;
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @BeforeUpdate()
+  async b4update() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @BeforeRemove()
+  async b4block() {
+    this.status = false;
+  }
 }
